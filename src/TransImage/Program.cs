@@ -7,7 +7,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-
+using Serilog;
 namespace TransImage
 {
     public class Program
@@ -18,7 +18,6 @@ namespace TransImage
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+            WebHost.CreateDefaultBuilder(args).UseStartup<Startup>();
     }
 }

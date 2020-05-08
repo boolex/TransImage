@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace TransImage
 {
@@ -17,6 +19,11 @@ namespace TransImage
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            Log.Logger = new LoggerConfiguration()
+             .Enrich.FromLogContext()
+             .WriteTo.File("log.txt")
+             .CreateLogger();
         }
 
 
@@ -37,8 +44,9 @@ namespace TransImage
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddFile("Logs/myapp-{Date}.txt");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -48,7 +56,7 @@ namespace TransImage
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
-
+            app.UseMiddleware<RequestLoggingMiddleware>();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
